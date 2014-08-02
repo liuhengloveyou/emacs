@@ -1,25 +1,33 @@
 (custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(ecb-options-version "2.40")
- ;;'(menu-bar-mode nil)
+ '(cua-mode t nil (cua-base))
+ '(current-language-environment "UTF-8")
+ '(custom-enabled-themes (quote (misterioso)))
+ '(display-time-mode t)
+ ;; '(font-use-system-font t)
+ '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
- '(tool-bar-mode nil)
  '(show-paren-mode t)
- '(size-indication-mode t)
- '(transient-mark-mode (quote (only . t))))
+ '(size-indication-mode t) 
+ '(tool-bar-mode nil)
+ '(uniquify-buffer-name-style (quote forward) nil (uniquify) (quote (transient-mark-mode (quote (only . t))))))
 
 ;; 个人信息
 (setq user-full-name "Heng Liu")
 (setq user-mail-address "liuhengloveyou@gmail.com")
 ;; 编码方式
-(setenv "LC_CTYPE" "zh_CN.utf-8") ;; 引入系统变量, 中文输入法需要
-(setq default-buffer-file-coding-system 'utf-8) ;; 新建文件的编码方式
-(set-terminal-coding-system 'utf-8) ;; 终端方式的编码方式
-(setq file-name-coding-system 'utf-8) ;; 读取或写入文件名的编码方式
-(set-buffer-file-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
+;;(setenv "LC_CTYPE" "zh_CN.utf-8") ;; 引入系统变量, 中文输入法需要
+;;(setq default-buffer-file-coding-system 'utf-8) ;; 新建文件的编码方式
+;;(set-terminal-coding-system 'utf-8) ;; 终端方式的编码方式
+;;(setq file-name-coding-system 'utf-8) ;; 读取或写入文件名的编码方式
+;;(set-buffer-file-coding-system 'utf-8)
+;;(set-keyboard-coding-system 'utf-8)
+;;(set-selection-coding-system 'utf-8)
+;;(prefer-coding-system 'utf-8)
 (global-linum-mode 1) ;; 显示行号
 (setq column-number-mode t) ;;显示列号
 (setq major-mode 'text-mode) ;; 打开就启用text模式
@@ -34,14 +42,15 @@
 (setq visible-bell t) ;; 关闭出错时的蜂鸣提示声
 (setq ring-bell-function 'ignore) ;; 没有提示音,也不闪屏
 (setq echo-keystrokes 0.1) ;; 尽快显示按键序列
-(which-func-mode 1) ;; 用来显示当前光标在哪个函数
+(which-function-mode 1) ;; 用来显示当前光标在哪个函数
 ;; (setq auto-image-file-mode t) ;;让 Emacs 可以直接打开和显示图片
 ;;(transient-mark-mode t) ;; 高亮显示要拷贝的区域
 (setq-default cursor-type 'bar) ;;光标显示为一竖线
-;; (setq enable-recursive-minibuffers t)
-;; (setq special-display-buffer-names '("*Help*" "*Apropos*")) ;; 单独跳出一个frame
+(set-cursor-color "white") ;;光标色
+(setq enable-recursive-minibuffers t)
+;;(setq special-display-buffer-names '("*Help*" "*Apropos*")) ;; 单独跳出一个frame
 (setq resize-mini-windows t);;允许minibuffer自由变化其宽度大小
-(blink-cursor-mode -1) ;;指针不要闪
+(blink-cursor-mode 1) ;;指针要闪
 (setq x-select-enable-clipboard t) ;; Linux 下复制内容到系统的剪切板
 ;;(setq-default indicate-buffer-boundaries 'left) ;; 在fringe上显示一个小箭头指示当前buffer的边界
 (autoload 'toggle-emacs-lock "emacs-lock" "Emacs lock" t) ;; emacs lock
@@ -82,10 +91,10 @@
 ;;可以递归的使用 minibuffer
 (setq scroll-margin 3 scroll-conservatively 10000)
 ;;鼠标滚轮，默认的滚动太快，这里改为3行
-;;(defun up-slightly () (interactive) (scroll-up 3))
-;;(defun down-slightly () (interactive) (scroll-down 3))
-;;(global-set-key [mouse-4] 'down-slightly)
-;;(global-set-key [mouse-5] 'up-slightly)
+(defun up-slightly () (interactive) (scroll-up 3))
+(defun down-slightly () (interactive) (scroll-down 3))
+(global-set-key [mouse-4] 'down-slightly)
+(global-set-key [mouse-5] 'up-slightly)
 
 ;; CUA矩阵编辑模式
 ;; M-x cua-mod
@@ -96,18 +105,9 @@
 (defadvice yank-pop (around kill-ring-browse-maybe (arg))
   "If last action was not a yank, run `browse-kill-ring' instead."
   (if (not (eq last-command 'yank))
-      (browse-kill-ring)
-    ad-do-it))
+      (browse-kill-ring) ad-do-it))
 (ad-activate 'yank-pop)
 (global-set-key (kbd "C-c k") 'browse-kill-ring)
-
-;; tab和缩进  
-(setq indent-tabs-mode nil)
-(setq tab-width 8)
-(setq tab-stop-list ())
-(setq tab-always-indent 'complete) ;; 先格式化再补全
-;;(loop for x downfrom 40 to 1 do
-;;      (setq tab-stop-list (cons (* x 8) tab-stop-list)))
 
 ;; 设置书签文件
 ;; C-x r m Bookmark     bookmark-set           设置一个名为 Bookmark 的书签
@@ -134,22 +134,23 @@
 (global-set-key "%" 'match-paren)
 
 ;; 自动补全括号
-(defun my-c-mode-auto-pair ()
-  (interactive)
-  (setq skeleton-pair-alist  '(
-			       (?` ?` _ "''")
-			       (?\( _ ")")
-			       (?\[  _ "]")
-			       (?{ _ ?} >)
-			       (?\" _ "\"")))
-  (setq skeleton-pair t)
-  (local-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "'") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "\"") 'skeleton-pair-insert-maybe))
-(add-hook 'c-mode-hook 'my-c-mode-auto-pair)
-(add-hook 'c++-mode-hook 'my-c-mode-auto-pair)
+;;(defun my-c-mode-auto-pair ()
+;;  (interactive)
+;;  (setq skeleton-pair-alist
+;; 	'((?` ?` _ "''")
+;; 	  (?\( _ ")")
+;; 	  (?\[  _ "]")
+;; 	  (?{ _ ?} >)
+;; 	  (?\" _ "\"")))
+;;  (setq skeleton-pair t)
+;;  (local-set-key (kbd "(") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "{") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "'") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "[") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "\"") 'skeleton-pair-insert-maybe))
+;;(add-hook 'c-mode-hook 'my-c-mode-auto-pair)
+;;(add-hook 'c++-mode-hook 'my-c-mode-auto-pair)
+;;(add-hook 'after-init-hook 'my-c-mode-auto-pair)
 
 ;; dos 和 unix 格式转换
 (defun dos2unix ()
@@ -213,18 +214,25 @@
 (add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
 (add-hook 'shell-mode-hook 'kill-buffer-when-exitt)
 
-(global-set-key "\C-m" 'newline-and-indent) ;; 回车缩进
-(global-set-key (kbd "C-<return>") 'newline)
+ ;; 回车缩进
+(global-set-key "\C-m" 'newline-and-indent)
+(global-set-key (kbd "C-<return>") 'newline-and-indent)
 (global-set-key [f4] 'whitespace-cleanup) ;; 清除代码中不必要的空格和TAB
+(global-set-key "\C-x\C-j" 'align) ;; 变量自动对
 
-;; 父目录/buffer名，显示同名buffer
-;;(require 'uniquify)
-;;(setq uniquify-buffer-name-style 'forward)
+;; 插件加载目录
+(add-to-list 'load-path "~/.emacs.d/plugins");
 
 ;; ibuffer - operate on buffers like dired
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-(add-to-list 'load-path "~/.emacs.d/plugins");
+;; tab和缩进
+(setq indent-tabs-mode t)
+(setq tab-width 8)
+(setq tab-stop-list ())
+(setq tab-always-indent 'complete) ;; 先格式化再补全
+;;(loop for x downfrom 40 to 1 do
+;;      (setq tab-stop-list (cons (* x 8) tab-stop-list)))
 
 ;;高亮光标处单词
 (require 'highlight-symbol)
@@ -250,6 +258,14 @@
 (set-face-foreground 'ido-subdir "yellow")
 (setq ido-enable-flex-matching t)
 
+;; tabbar 标签功能
+(require 'tabbar)
+(tabbar-mode t)
+(global-set-key (kbd "<s-up>") 'tabbar-backward-group)
+(global-set-key (kbd "<s-down>") 'tabbar-forward-group)
+(global-set-key (kbd "<s-left>") 'tabbar-backward)
+(global-set-key (kbd "<s-right>") 'tabbar-forward)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CC mode C语言编辑
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -268,7 +284,8 @@
 ;;  
 ;; 建立索引的方法:
 ;; cd到工程的根目录运行:cscope -bkR
-;; -b 仅仅只建立交叉索引
+;; -b 仅仅只建立交叉索引,不启动自带的用户界面
+;; -q 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度
 ;; -k 不建立对 /usr/include的索引Kernel Mode - don't use /usr/include for #include files
 ;; -R 递归当前目录寻找文件进行索引
 ;; 
@@ -284,10 +301,11 @@
 ;; 运行:M-x cscope-find-this-file 快捷键为C-c s f
 ;;
 ;; 注意对于跳出cscope可选文件选择窗口 可以采用鼠标中键或者enter打开
-(require 'xcscope)
-
-;; gtags
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
+(setq cscope-program "gtags-cscope") ;; gtags
+(require 'xcscope)
+(cscope-setup)
 (autoload 'gtags-mode "gtags" "" t)
 (global-set-key (kbd "<C-M-.>") 'gtags-find-with-grep)
 (global-set-key (kbd "<C-M-;>") 'gtags-find-rtag)
@@ -302,29 +320,32 @@
 (add-hook 'gtags-select-mode-hook
 	  '(lambda ()
 	     (setq hl-line-face 'underline)
-	     (hl-line-mode 1)
-	     ))
+	     (hl-line-mode 1)))
 
 ;; C style
 (defconst my-c-style
   '((c-toggle-ab-always-indent .t)
     (c-tab-always-indent .t)
     (c-comment-only-line-offset .8)
-    (c-hanging-braces-alist .((substatement-open after)
-			      (brace-list-open)))
-    (c-hanging-colons-alist .((member-init-intro before)
-			      (inher-intro)
-			      (case-label after)
-			      (label after)
-			      (access-label after)))
-    (c-cleanup-list .(scope-operator
-		      empty-defun-braces
-		      defun-close-semi))
-    (c-offsets-alist .((arglist-close .c-lineup-arglist)
-		       (substatement-open .0)
-		       (case-label .8)
-		       (block-open .0)
-		       (knr-argdecl-intro .-)))
+    (c-hanging-braces-alist
+     .((substatement-open after)
+       (brace-list-open)))
+    (c-hanging-colons-alist
+     .((member-init-intro before)
+       (inher-intro)
+       (case-label after)
+       (label after)
+       (access-label after)))
+    (c-cleanup-list
+     .(scope-operator
+       empty-defun-braces
+       defun-close-semi))
+    (c-offsets-alist
+     .((arglist-close .c-lineup-arglist)
+       (substatement-open .0)
+       (case-label .8)
+       (block-open .0)
+       (knr-argdecl-intro .-)))
     (c-echo-syntactic-information-p . t))
   "My C Programming Style")
 
@@ -374,29 +395,30 @@
 ;; Speedbar: Speedbar可以单独创建一个frame，用于显示目录树，函数列表等等。这个组件已经包含在emacs官方发布包中
 ;; EIEIO: EIEIO是一个底层库，它为elisp加入了OO支持。cedet的其它组件都依赖于EIEIO
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq semantic-default-submodes '(
-				  ;; enable这个mode让cedet在emacs空闲的时候自动分析buffer内容，比如正在编辑的buffer内容改变后。这个mode一般应该是需要enable的，如果没有enable这个mode，那只有手工触发才会让cedet重新分析。
-				  global-semantic-idle-scheduler-mode
-				  ;; semanticdb是semantic用来保存分析后的内容的，所以也是应该enable的。
-				  global-semanticdb-minor-mode
-				  ;; 打开这个mode之后，光标停留在一个类/函数等tag上时，会在minibuffer显示出这个函数原型
-				  global-semantic-idle-summary-mode
-				  ;; cedet有tag跳转的功能，但是经常跳转完后还需要跳回刚才的位置. 每次跳转semantic都会把位置当作书签一样记录下来，以后可以通过M-x semantic-mrub-switch-tags（绑定到按键C-x B上）来选择跳回以前的任意一个位置。
-				  global-semantic-mru-bookmark-mode
-				  ;; 光标在某处停留一段时间后，semantic会自动提示此处可以补全的内容
-				  global-semantic-idle-completions-mode
-				  ;; emacs会把最近修改过的内容高亮出来
-				  global-semantic-highlight-edits-mode
-				  ;; 这个mode会把semantic解析不了的内容用红色下划线标识出来
-				  ;; global-semantic-show-unmatched-syntax-mode
-				  ;; semantic会在modeline上显示出当前解析状态
-				  global-semantic-show-parser-state-mode
-				  ;;
-				  global-semantic-idle-local-symbol-highlight-mode
-				  ;; semantic会在类/函数等tag上方加一条蓝色的线，源文件很大的时候用它可以提示出哪些是类和函数的头
-				  global-semantic-decoration-mode
-				  ;; semantic会用灰的底色把光标所在函数名高亮显示
-				  global-semantic-highlight-func-mode))
+(setq semantic-default-submodes
+      '(
+	;; enable这个mode让cedet在emacs空闲的时候自动分析buffer内容，比如正在编辑的buffer内容改变后。这个mode一般应该是需要enable的，如果没有enable这个mode，那只有手工触发才会让cedet重新分析。
+	global-semantic-idle-scheduler-mode
+	;; semanticdb是semantic用来保存分析后的内容的，所以也是应该enable的。
+	global-semanticdb-minor-mode
+	;; 打开这个mode之后，光标停留在一个类/函数等tag上时，会在minibuffer显示出这个函数原型
+	global-semantic-idle-summary-mode
+	;; cedet有tag跳转的功能，但是经常跳转完后还需要跳回刚才的位置. 每次跳转semantic都会把位置当作书签一样记录下来，以后可以通过M-x semantic-mrub-switch-tags（绑定到按键C-x B上）来选择跳回以前的任意一个位置。
+	global-semantic-mru-bookmark-mode
+	;; 光标在某处停留一段时间后，semantic会自动提示此处可以补全的内容
+	global-semantic-idle-completions-mode
+	;; emacs会把最近修改过的内容高亮出来
+	global-semantic-highlight-edits-mode
+	;; 这个mode会把semantic解析不了的内容用红色下划线标识出来
+	;; global-semantic-show-unmatched-syntax-mode
+	;; semantic会在modeline上显示出当前解析状态
+	global-semantic-show-parser-state-mode
+	;;
+	global-semantic-idle-local-symbol-highlight-mode
+	;; semantic会在类/函数等tag上方加一条蓝色的线，源文件很大的时候用它可以提示出哪些是类和函数的头
+	global-semantic-decoration-mode
+	;; semantic会用灰的底色把光标所在函数名高亮显示
+	global-semantic-highlight-func-mode))
 (semantic-mode 1)
 ;;配置Semantic的检索范围
 (setq semanticdb-project-roots (list (expand-file-name "/")))
@@ -416,20 +438,9 @@
 	try-expand-whole-kill))
 (global-set-key [(meta ?/)] 'complete-symbol)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ECB
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq ecb-tip-of-the-day nil) ;;不显示ecbTip
-;;启动/关闭ECB
-(defun openecb
-  ()
-  (interactive)
-  (ecb-activate)
-  (ecb-layout-switch "left10")
-  (setq ecb-primary-secondary-mouse-buttons 'mouse-1--C-mouse-1) ;;click mouse 1 to select ecb tree
-  )
-(global-set-key [f12] 'openecb)
-(global-set-key [C-f12] 'ecb-deactivate)
+;; speedbar
+(when window-system (speedbar t))
+(speedbar-add-supported-extension ".go")
 (global-set-key [M-f12] 'speedbar)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -448,21 +459,38 @@
 	  (semantic-add-system-include dir 'c-mode))
 	include-dirs))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; yasnippet 模板补全
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'yasnippet)
-;;(yas/load-directory "~/.emacs.d/plugins/snippets")
-(yas-global-mode 1)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Auto complete 自动补全
+;; complete 自动补全
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
-(ac-config-default)
-(global-auto-complete-mode 1)
-(global-set-key [(ctrl ?/)] 'ac-complete)
+;;(require 'auto-complete-config)
+;;(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
+;;(ac-config-default)
+;;(global-auto-complete-mode 1)
+;;(global-set-key [(ctrl ?/)] 'ac-complete)
+(add-to-list 'load-path ".emacs.d/elpa/company-0.8.0/")
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-tooltip-limit 16)                      ; bigger popup window
+(setq company-minimum-prefix-length 0)               ; autocomplete right after '.'
+(setq company-idle-delay .3)                         ; shorter delay before autocompletion popup
+(setq company-echo-delay 0)                          ; removes annoying blinking
+(setq company-begin-commands '(self-insert-command)) ; start autocompletion only after typing
+(global-set-key [(ctrl ?/)] 'company-complete)
+;;(global-set-key "\M-n" 'company-select-next)
+;;(global-set-key "\M-p" 'company-select-previous)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-preview ((t (:foreground "darkgray" :underline t))))
+ '(company-preview-common ((t (:inherit company-preview))))
+ '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
+ '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
+ '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
+ '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
 
 
 ;; 调整字体大小
@@ -486,7 +514,31 @@
 ;;  (require 'vc-git)
 ;;  (when (featurep 'vc-git) (add-to-list 'vc-handled-backends 'git))
 ;;  (require 'git)
-;;  (autoload 'git-blame-mode "git-blame"
-;;            "Minor mode for incremental blame for Git." t)
+;;  (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
+;; find ${GOROOT}/src/pkg/ ./ -name "[^.]*.go" >cscope.files && cscope -Rbkq
+;;
 
-(load-theme 'misterioso t)
+;; golang
+;; gocode set propose-builtins true
+;; gocode set lib-path /media/f2/golang/go/pkg/linux_amd64
+(setenv "PATH" (concat (getenv "PATH") ":/Volumes/disk/Develop/golang/mygo/bin"))
+(setq exec-path (append exec-path '("/Volumes/disk/Develop/golang/mygo/bin")))
+(setenv "PATH" (concat (getenv "PATH") ":/Volumes/disk/Develop/golang/go/bin"))
+(setq exec-path (append exec-path '("/Volumes/disk/Develop/golang/go/bin")))
+(require 'go-mode-load)
+(require 'company-go)
+(add-hook 'go-mode-hook
+	  (lambda ()
+	    (set (make-local-variable 'company-backends) '(company-go))
+	    (company-mode)
+	    (cscope-minor-mode)
+	    ;; Imenu & Speedbar
+	    (setq imenu-generic-expression
+		  '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)
+		    ("func" "^func *\\(.*\\) {" 1)))
+	    (imenu-add-to-menubar "Index")))
+
+;; lua-mode
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
