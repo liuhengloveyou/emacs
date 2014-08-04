@@ -12,7 +12,7 @@
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
- '(size-indication-mode t) 
+ '(size-indication-mode t)
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify) (quote (transient-mark-mode (quote (only . t))))))
 
@@ -44,11 +44,10 @@
 (setq echo-keystrokes 0.1) ;; 尽快显示按键序列
 (which-function-mode 1) ;; 用来显示当前光标在哪个函数
 ;; (setq auto-image-file-mode t) ;;让 Emacs 可以直接打开和显示图片
-;;(transient-mark-mode t) ;; 高亮显示要拷贝的区域
+(transient-mark-mode t) ;; 高亮显示要拷贝的区域
 (setq-default cursor-type 'bar) ;;光标显示为一竖线
 (set-cursor-color "white") ;;光标色
 (setq enable-recursive-minibuffers t)
-;;(setq special-display-buffer-names '("*Help*" "*Apropos*")) ;; 单独跳出一个frame
 (setq resize-mini-windows t);;允许minibuffer自由变化其宽度大小
 (blink-cursor-mode 1) ;;指针要闪
 (setq x-select-enable-clipboard t) ;; Linux 下复制内容到系统的剪切板
@@ -273,7 +272,7 @@
 ;; 在cscope buffer按u支持多次返回.
 ;; C-c s a	设定初始化的目录，一般是你代码的根目录
 ;; C-s s I	对目录中的相关文件建立列表并进行索引
-;; 
+;;
 ;; C-c s s	序找符号
 ;; C-c s g	寻找全局的定义
 ;; C-c s c	看看指定函数被哪些函数所调用
@@ -281,14 +280,14 @@
 ;; C-c s e	寻找正则表达式
 ;; C-c s f	寻找文件
 ;; C-c s i	看看指定的文件被哪些文件include
-;;  
+;;
 ;; 建立索引的方法:
 ;; cd到工程的根目录运行:cscope -bkR
 ;; -b 仅仅只建立交叉索引,不启动自带的用户界面
 ;; -q 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度
 ;; -k 不建立对 /usr/include的索引Kernel Mode - don't use /usr/include for #include files
 ;; -R 递归当前目录寻找文件进行索引
-;; 
+;;
 ;; cscope使用方法(打开C/C++程序文件时菜单栏上会有Cscope的选项):
 ;; 1.建立索引
 ;; 运行M-x cscope-create-list-of-files-to-index 快捷键为C-c s I 建立索引
@@ -307,16 +306,16 @@
 (require 'xcscope)
 (cscope-setup)
 (autoload 'gtags-mode "gtags" "" t)
-(global-set-key (kbd "<C-M-.>") 'gtags-find-with-grep)
-(global-set-key (kbd "<C-M-;>") 'gtags-find-rtag)
-(global-set-key "\C-cas" 'gtags-find-symbol)
-(global-set-key "\C-cad" 'gtags-find-tag)
-(global-set-key "\C-cac" 'gtags-find-rtag)
-(global-set-key "\C-caf" 'gtags-find-file)
-(global-set-key "\C-cai" 'gtags-find-with-idutils)
-(global-set-key "\C-can" 'gtags-select-next-tag)
-(global-set-key "\C-cap" 'gtags-select-prev-tag)
-(global-set-key "\C-cau" 'gtags-pop-stack)
+(global-set-key (kbd "<C-M-.>") 'xgtags-find-with-grep)
+(global-set-key (kbd "<C-M-;>") 'xgtags-find-rtag)
+(global-set-key "\C-cas" 'xgtags-find-symbol)
+(global-set-key "\C-cad" 'xgtags-find-tag)
+(global-set-key "\C-cac" 'xgtags-find-rtag)
+(global-set-key "\C-caf" 'xgtags-find-file)
+(global-set-key "\C-cai" 'xgtags-find-with-idutils)
+(global-set-key "\C-can" 'xgtags-select-next-tag)
+(global-set-key "\C-cap" 'xgtags-select-prev-tag)
+(global-set-key "\C-cau" 'xgtags-pop-stack)
 (add-hook 'gtags-select-mode-hook
 	  '(lambda ()
 	     (setq hl-line-face 'underline)
@@ -349,17 +348,17 @@
     (c-echo-syntactic-information-p . t))
   "My C Programming Style")
 
-;; offset customizations not in my-c-style 
-(setq c-offsets-alist '((member-init-intro . ++))) 
+;; offset customizations not in my-c-style
+(setq c-offsets-alist '((member-init-intro . ++)))
 
 ;; Customizations for all modes in CC Mode.
 (defun my-c-mode-common-hook ()
-  (c-add-style "PERSONAL" my-c-style t) 
+  (c-add-style "PERSONAL" my-c-style t)
   (c-set-style "K&R")
   (setq indent-tabs-mode t)
   (setq tab-width 8)
   (setq c-basic-offset 8)
-  ;;(setq c-toggle-auto-newline t)
+  (setq c-toggle-auto-newline t)
   (c-toggle-hungry-state 1) ;;此模式下，当按Backspace时会删除最多的空格
   (c-toggle-auto-hungry-state 1) ;; auto-newline and hungry-delete
   (which-function-mode) ;;在状态条上显示当前光标在哪个函数体内部
@@ -459,16 +458,16 @@
 	  (semantic-add-system-include dir 'c-mode))
 	include-dirs))
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; yasnippet 模板补全
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path "~/.emacs.d/elpa/yasnippet-0.8.0")
+(require 'yasnippet)
+(yas-global-mode 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; complete 自动补全
+;;  自动补全
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;(require 'auto-complete-config)
-;;(add-to-list 'ac-dictionary-directories "~/.emacs.d/plugins/ac-dict")
-;;(ac-config-default)
-;;(global-auto-complete-mode 1)
-;;(global-set-key [(ctrl ?/)] 'ac-complete)
 (add-to-list 'load-path ".emacs.d/elpa/company-0.8.0/")
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
@@ -481,33 +480,43 @@
 ;;(global-set-key "\M-n" 'company-select-next)
 ;;(global-set-key "\M-p" 'company-select-previous)
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
  '(company-preview ((t (:foreground "darkgray" :underline t))))
  '(company-preview-common ((t (:inherit company-preview))))
  '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
+ '(company-tooltip-selection ((t (:background "steelblue" :foreground "white"))))
  '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
  '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
  '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; 快速include一个系统头文件
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; echo "" | g++ -v -x c++ -E -
+(mapc (lambda (mode)
+	(define-abbrev-table mode '(("inc" "" skeleton-include 1))))
+      '(c-mode-abbrev-table c++-mode-abbrev-table))
+;; 输入 inc , 可以自动提示输入文件名称,可以自动补全.
+(define-skeleton skeleton-include
+  "generate include<>" ""
+  > "#include <"
+  (completing-read "Include File:"
+		   (mapcar #'(lambda (f) (list f ))
+			   (apply 'append (mapcar #'(lambda (dir) (directory-files dir))
+						  (list "/usr/include/c++/4.8"
+							"/usr/include/x86_64-linux-gnu/c++/4.8"
+							"/usr/include/c++/4.8/backward"
+							"/usr/lib/gcc/x86_64-linux-gnu/4.8/include"
+							"/usr/local/include"
+							"/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"
+							"/usr/include/x86_64-linux-gnu"
+							"/usr/include"
+							"/usr/include/sys"
+							"/usr/local/include"
+							)))))">")
 
 ;; 调整字体大小
 (global-set-key (kbd "<C-M-wheel-up>") 'text-scale-increase)
 (global-set-key (kbd "<C-M-wheel-down>") 'text-scale-decrease)
-
-;;
-;;;;goto-char:当你按 C-c a x (x 是任意一个字符) 时，光 标就会到下一个 x 处,再次按 x，光标就到下一个 x.
-;;(defun wy-go-to-char (n char)
-;;  "Move forward to Nth occurence of CHAR.
-;;Typing `wy-go-to-char-key' again will move forwad to the next Nthoccurence of CHAR."
-;;  (interactive "p\ncGo to char: ")
-;;  (search-forward (string char) nil nil n)
-;;  (while (char-equal (read-char) char)
-;;    (search-forward (string char) nil nil n))
-;;  (setq unread-command-events (list last-input-event)))
-;;(global-set-key (kbd "C-c g") 'wy-go-to-char)
 
 ;; GIT 版本管理
 ;; (setq load-path (cons (expand-file-name "/usr/share/doc/git-core/contrib/emacs") load-path))
