@@ -269,58 +269,6 @@
 ;; CC mode C语言编辑
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; 在cscope buffer按u支持多次返回.
-;; C-c s a	设定初始化的目录，一般是你代码的根目录
-;; C-s s I	对目录中的相关文件建立列表并进行索引
-;;
-;; C-c s s	序找符号
-;; C-c s g	寻找全局的定义
-;; C-c s c	看看指定函数被哪些函数所调用
-;; C-c s C	看看指定函数调用了哪些函数
-;; C-c s e	寻找正则表达式
-;; C-c s f	寻找文件
-;; C-c s i	看看指定的文件被哪些文件include
-;;
-;; 建立索引的方法:
-;; cd到工程的根目录运行:cscope -bkR
-;; -b 仅仅只建立交叉索引,不启动自带的用户界面
-;; -q 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度
-;; -k 不建立对 /usr/include的索引Kernel Mode - don't use /usr/include for #include files
-;; -R 递归当前目录寻找文件进行索引
-;;
-;; cscope使用方法(打开C/C++程序文件时菜单栏上会有Cscope的选项):
-;; 1.建立索引
-;; 运行M-x cscope-create-list-of-files-to-index 快捷键为C-c s I 建立索引
-;; 注意目录选择需要建立索引的根目录
-;; 2.进行索引跳转
-;; 跳转到对应的tag:运行M-x cscope-find-global-definition-no-prompting 快捷键为C-c s G
-;; 3.跳转返回
-;; 运行:M-x cscope-pop-mark 快捷键为C-c s u
-;; 4.寻找头文件
-;; 运行:M-x cscope-find-this-file 快捷键为C-c s f
-;;
-;; 注意对于跳出cscope可选文件选择窗口 可以采用鼠标中键或者enter打开
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-(setq exec-path (append exec-path '("/usr/local/bin")))
-(setq cscope-program "gtags-cscope") ;; gtags
-(require 'xcscope)
-(cscope-setup)
-(autoload 'gtags-mode "gtags" "" t)
-(global-set-key (kbd "<C-M-.>") 'xgtags-find-with-grep)
-(global-set-key (kbd "<C-M-;>") 'xgtags-find-rtag)
-(global-set-key "\C-cas" 'xgtags-find-symbol)
-(global-set-key "\C-cad" 'xgtags-find-tag)
-(global-set-key "\C-cac" 'xgtags-find-rtag)
-(global-set-key "\C-caf" 'xgtags-find-file)
-(global-set-key "\C-cai" 'xgtags-find-with-idutils)
-(global-set-key "\C-can" 'xgtags-select-next-tag)
-(global-set-key "\C-cap" 'xgtags-select-prev-tag)
-(global-set-key "\C-cau" 'xgtags-pop-stack)
-(add-hook 'gtags-select-mode-hook
-	  '(lambda ()
-	     (setq hl-line-face 'underline)
-	     (hl-line-mode 1)))
-
 ;; C style
 (defconst my-c-style
   '((c-toggle-ab-always-indent .t)
@@ -364,7 +312,7 @@
   (which-function-mode) ;;在状态条上显示当前光标在哪个函数体内部
   (local-set-key "\C-c\t" 'complete-symbol)
   (hs-minor-mode 1) ;; 代码折叠
-  (gtags-mode 1) ;; 加载GLOBAL
+  (ggtags-mode 1)  ;; 加载GLOBAL
   )
 (add-hook 'c-mode-hook 'my-c-mode-common-hook)
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
