@@ -466,15 +466,6 @@
 (global-set-key (kbd "<C-M-mouse-4>") 'text-scale-increase)
 (global-set-key (kbd "<C-M-mouse-5>") 'text-scale-decrease)
 
-;; GIT 版本管理
-;; (setq load-path (cons (expand-file-name "/usr/share/doc/git-core/contrib/emacs") load-path))
-;;  (require 'vc-git)
-;;  (when (featurep 'vc-git) (add-to-list 'vc-handled-backends 'git))
-;;  (require 'git)
-;;  (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
-;; find ${GOROOT}/src/pkg/ ./ -name "[^.]*.go" >cscope.files && cscope -Rbkq
-;;
-
 ;; golang
 ;; gocode set propose-builtins true
 ;; gocode set lib-path /media/f2/golang/go/pkg/linux_amd64
@@ -487,8 +478,8 @@
 (add-hook 'go-mode-hook
 	  (lambda ()
 	    (set (make-local-variable 'company-backends) '(company-go))
-	    (company-mode)
-	    (cscope-minor-mode)
+	    (company-mode 1)
+	    (ggtags-mode 1)
 	    ;; Imenu & Speedbar
 	    (setq imenu-generic-expression
 		  '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)
