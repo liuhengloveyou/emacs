@@ -210,6 +210,7 @@
 
 ;; 可视书签
 (require 'bm)
+(setq bm-cycle-all-buffers t)
 (global-set-key (kbd "<left-fringe> <mouse-1>") 'bm-toggle-mouse)
 (global-set-key (kbd "<left-fringe> <C-mouse-1>") 'bm-previous-mouse)
 (global-set-key (kbd "<left-fringe> <C-mouse-2>") 'bm-next-mouse)
