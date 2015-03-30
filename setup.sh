@@ -4,7 +4,7 @@ if [ ! -f ~/.emacs.d/elpa/highlight-symbol.el ]
 then
     echo "install highlight-symbol.el"
     git clone https://github.com/nschum/highlight-symbol.el.git
-    mv highlight-symbol.el/highlight-symbol.el ~/.emacs.d/elpa
+    mv highlight-symbol.el/highlight-symbol.el ~/.emacs.d/elpa/
     rm -rf highlight-symbol.el
 fi
 
@@ -21,4 +21,8 @@ then
     wget -O ~/.emacs.d/elpa/tabbar.el http://www.emacswiki.org/emacs/download/tabbar.el
 fi
 
+if [ ! -f ~/.emacs.d/elpa/smart-compile.el ]
+then
+    wget -O ~/.emacs.d/elpa/smart-compile.el http://www.emacswiki.org/emacs/download/smart-compile.el
+fi
 
