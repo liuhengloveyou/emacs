@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir ~/.emacs.d/elpa/
+
 if [ ! -f ~/.emacs.d/elpa/highlight-symbol.el ]
 then
     echo "install highlight-symbol.el"
