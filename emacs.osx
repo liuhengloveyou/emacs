@@ -9,6 +9,7 @@
  '(custom-enabled-themes (quote (misterioso)))
  '(display-time-mode t)
  '(font-use-system-font t)
+ '(package-selected-packages (quote (yasnippet ggtags company)))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
@@ -265,8 +266,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; C语言
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; gtags
-(add-to-list 'load-path "~/.emacs.d/elpa/ggtags-0.8.9")
+;; ggtags
+(add-to-list 'load-path ".emacs.d/elpa/ggtags-0.8.9/")
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin/")))
 (require 'ggtags)
@@ -356,7 +357,7 @@
 (global-set-key [M-f12] 'speedbar)
 
 ;; yasnippet 模板补全
-(add-to-list 'load-path "~/.emacs.d/elpa/yasnippet-0.8.0")
+(add-to-list 'load-path ".emacs.d/elpa/yasnippet-0.8.0/")
 (require 'yasnippet)
 (yas-global-mode 1)
 
@@ -383,12 +384,13 @@
 ;; golang
 ;; gocode set propose-builtins true
 ;; gocode set lib-path /usr/local/go/pkg/darwin_amd64
+;; gocode set autobuild true
 (setenv "GOROOT" "/usr/local/go/")
 (setenv "GOPATH" "/Users/liuheng/go")
 (setenv "PATH" (concat (getenv "PATH") ":/Users/liuheng/go/bin"))
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/go/bin"))
 (setq exec-path (append exec-path '("/Users/liuheng/go/bin")))
-(setq exec-path (append exec-path '("bin")))
+(setq exec-path (append exec-path '("/usr/local/go/bin")))
 (require 'go-mode-autoloads)
 (require 'company-go)
 (add-hook 'go-mode-hook
@@ -399,7 +401,7 @@
 	    (local-set-key (kbd "C-c C-f") 'gofmt)
 	    (set (make-local-variable 'company-backends) '(company-go))
 	    (company-mode)
-	    ;; (ggtags-mode 1)
+	    (add-hook 'before-save-hook 'gofmt-before-save)
 	    ;; Imenu & Speedbar
 	    (setq imenu-generic-expression
 		  '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)

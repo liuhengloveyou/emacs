@@ -28,3 +28,10 @@ then
     wget -O ~/.emacs.d/elpa/smart-compile.el http://www.emacswiki.org/emacs/download/smart-compile.el
 fi
 
+if [ ! -f ~/.emacs.d/elpa/go-mode.el ]
+then
+    echo "install go-mode"
+    git clone https://github.com/dominikh/go-mode.el.git
+    mv go-mode.el/go-mode*.el ~/.emacs.d/elpa/
+    /bin/rm -rf go-mode.el/
+fi
