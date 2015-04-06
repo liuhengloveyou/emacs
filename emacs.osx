@@ -225,6 +225,8 @@
 (defun dos2unix ()
   "dos2unix on current buffer."
   (interactive)
+  (setq buffer-display-table (make-display-table))
+  (aset buffer-display-table ?\^M [])
   (set-buffer-file-coding-system 'unix))
 (defun unix2dos ()
   "unix2dos on current buffer."
