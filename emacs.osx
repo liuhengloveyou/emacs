@@ -16,6 +16,15 @@
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify) (quote (transient-mark-mode (quote (only . t))))))
 
+;; MELPA
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
+
 ;; 个人信息
 (setq user-full-name "Heng Liu")
 (setq user-mail-address "liuhengloveyou@icloud.com")
@@ -125,23 +134,23 @@
 (global-set-key "%" 'match-paren)
 
 ;; 自动补全括号
-(defun my-c-mode-auto-pair ()
-  (interactive)
-  (setq skeleton-pair-alist
-	'((?` ?` _ "''")
-	  (?\( _ ")")
-	  (?\[	_ "]")
-	  (?{ _ ?} >)
-	  (?\" _ "\"")))
-  (setq skeleton-pair t)
-  (local-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "'") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-  (local-set-key (kbd "\"") 'skeleton-pair-insert-maybe))
-(add-hook 'c-mode-hook 'my-c-mode-auto-pair)
-(add-hook 'c++-mode-hook 'my-c-mode-auto-pair)
-(add-hook 'after-init-hook 'my-c-mode-auto-pair)
+;;(defun my-c-mode-auto-pair ()
+;;  (interactive)
+;;  (setq skeleton-pair-alist
+;; 	'((?` ?` _ "''")
+;; 	  (?\( _ ")")
+;; 	  (?\[	_ "]")
+;; 	  (?{ _ ?} >)
+;; 	  (?\" _ "\"")))
+;;  (setq skeleton-pair t)
+;;  (local-set-key (kbd "(") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "{") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "'") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "[") 'skeleton-pair-insert-maybe)
+;;  (local-set-key (kbd "\"") 'skeleton-pair-insert-maybe))
+;;(add-hook 'c-mode-hook 'my-c-mode-auto-pair)
+;;(add-hook 'c++-mode-hook 'my-c-mode-auto-pair)
+;;(add-hook 'after-init-hook 'my-c-mode-auto-pair)
 
 ;;解决emacs shell乱码
 (setq ansi-color-for-comint-mode t)
@@ -323,13 +332,7 @@
   (local-set-key "\C-cj" 'semantic-ia-fast-jump)
   (local-set-key "\C-cq" 'semantic-ia-show-doc)
   (local-set-key "\C-cs" 'semantic-ia-show-summary)
-  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle)
-;;  (local-set-key (kbd "C-c <left>") 'semantic-tag-folding-fold-block)
-;;  (local-set-key (kbd "C-c <right>") 'semantic-tag-folding-show-block)
-
-  (add-to-list 'ac-sources 'ac-source-semantic)
-  )
-;; (add-hook 'semantic-init-hooks 'alexott/cedet-hook)
+  (local-set-key "\C-cp" 'semantic-analyze-proto-impl-toggle))
 (add-hook 'c-mode-common-hook 'alexott/cedet-hook)
 (add-hook 'lisp-mode-hook 'alexott/cedet-hook)
 (add-hook 'scheme-mode-hook 'alexott/cedet-hook)
@@ -342,9 +345,7 @@
   (local-set-key "\C-ct" 'eassist-switch-h-cpp)
   (local-set-key "\C-xt" 'eassist-switch-h-cpp)
   (local-set-key "\C-ce" 'eassist-list-methods)
-  (local-set-key "\C-c\C-r" 'semantic-symref)
-
-  (add-to-list 'ac-sources 'ac-source-gtags))
+  (local-set-key "\C-c\C-r" 'semantic-symref))
 (add-hook 'c-mode-common-hook 'alexott/c-mode-cedet-hook)
 
 ;;;;配置Semantic的检索范围
@@ -371,8 +372,8 @@
 ;; ggtags
 (add-to-list 'load-path ".emacs.d/elpa/ggtags")
 (require 'ggtags)
-;;(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-;;(setq exec-path (append exec-path '("/usr/local/bin/")))
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin/")))
 
 
 ;; C style
@@ -412,7 +413,7 @@
   (setq indent-tabs-mode t)
   (setq tab-width 8)
   (setq c-basic-offset 8)
-  (setq c-toggle-auto-newline t)
+  ;;(setq c-toggle-auto-newline t)
   (c-toggle-hungry-state 1) ;;此模式下，当按Backspace时会删除最多的空格
   (c-toggle-auto-hungry-state 1) ;; auto-newline and hungry-delete
   (which-function-mode) ;;在状态条上显示当前光标在哪个函数体内部
@@ -518,3 +519,9 @@
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+(put 'upcase-region 'disabled nil)
+
+;; php
+(require 'php-mode)
+(eval-after-load 'php-mode
+  '(require 'php-ext))
