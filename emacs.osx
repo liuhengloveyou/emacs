@@ -11,7 +11,7 @@
  '(font-use-system-font t)
  '(package-selected-packages
    (quote
-    (go-guru tabbar markdown-mode smex sr-speedbar lua-mode ggtags company-go)))
+    (company virtualenvwrapper py-autopep8 elpy smart-compile go-guru tabbar markdown-mode smex sr-speedbar lua-mode ggtags company-go)))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
@@ -26,13 +26,9 @@
                     (not (gnutls-available-p))))
        (url (concat (if no-ssl "http" "http") "://melpa.org/packages/")))
   (add-to-list 'package-archives (cons "melpa" url) t))
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize) ;; You might already have this line
-
 
 ;; init PATH & exec-path from current shell
 (defun set-exec-path-from-shell-PATH ()
@@ -47,34 +43,21 @@
 ;; 个人信息
 (setq user-full-name "Heng Liu")
 (setq user-mail-address "liuhengloveyou@icloud.com")
-(set-face-attribute 'default nil :font "Monaco 13") ;; 字体
-;;(setq display-time-24hr-format t) ;; 时间使用24小时制
-;;(display-time-mode t) ;; mode line上的时间显示
-;;(setq display-time-day-and-date nil) ;; 时间显示包括日期和具体时间
-;;(setq display-time-interval 60) ;; 时间变化频率
-;;(setq column-number-mode t) ;;显示列号
-;;(global-linum-mode 1) ;; 显示行号
-;;(setq major-mode 'text-mode) ;; 打开就启用text模式
-;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(set-face-attribute 'default nil :font "Monaco 14") ;; 字体
+(setq display-time-24hr-format t) ;; 时间使用24小时制
+(setq major-mode 'text-mode) ;; 打开就启用text模式
 (setq inhibit-startup-message t) ;; 禁用启动信息
-;;(setq initial-scratch-message "")
-;; (setq auto-image-file-mode t) ;;让 Emacs 可以直接打开和显示图片
 (setq visible-bell t) ;; 关闭出错时的蜂鸣提示声
 (setq ring-bell-function 'ignore) ;; 没有提示音,也不闪屏
 (setq echo-keystrokes 0.2) ;; 尽快显示按键序列
-(which-function-mode 1) ;; 用来显示当前光标在哪个函数
 (transient-mark-mode t) ;; 高亮显示要拷贝的区域
 (setq-default cursor-type 'bar) ;;光标显示为一竖线
 (set-cursor-color "RED") ;;光标色
+;;(blink-cursor-mode 1) ;;指针要闪
 (setq enable-recursive-minibuffers t)
 (setq resize-mini-windows t);;允许minibuffer自由变化其宽度大小
-(blink-cursor-mode 1) ;;指针要闪
-;;(setq x-select-enable-clipboard t) ;; Linux 下复制内容到系统的剪切板
-;;(setq x-select-enable-clipboard t) ;;支持emacs和外部程序的粘贴
-;;(setq-default indicate-buffer-boundaries 'left) ;; 在fringe上显示一个小箭头指示当前buffer的边界
 (autoload 'toggle-emacs-lock "emacs-lock" "Emacs lock" t) ;; emacs lock
 (setq kill-do-not-save-duplicates t) ;; 不保存连续的重复的kill
-(auto-compression-mode 1) ;; 打开压缩文件时自动解压缩. 必须放在session前面
 (add-hook 'gnus-group-mode-hook 'gnus-topic-mode) ;; Group Buffer设置.自动进入Topic-mode
 (setq Man-notify-method 'pushy) ;; 在emacs读man文档时，使用当前buffer
 (setq version-control t) ;;启用备份
@@ -83,24 +66,19 @@
 (setq delete-old-versions t) ;;删掉不属于以上7版本的版本
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))) ;;设置备份文件的路径
 (setq backup-by-copying t) ;;备份设置方法，直接拷贝
-;;(setq make-backup-files nil) ;; 不产生备份文件
-;;(setq backup-inhibited t) ;; 不产生备份
 (setq auto-save-default nil) ;; 不生成名为#filename#的临时文件
 (setq auto-save-mode t ) ;; 自动保存
 (global-auto-revert-mode 1) ;;自动重载更改的文件
 (setq mouse-autoselect-window t) ;;当鼠标移动的时候自动转换frame，window或者minibuffer
 (fset 'yes-or-no-p 'y-or-n-p) ;;以 y/n代表 yes/no
 (set-default 'truncate-lines t) ;; 超长的行不折行显示
-;; (global-set-key [C-f10] 'menu-bar-mode) ;;将F10绑定为显示菜单栏
 (mouse-avoidance-mode 'animate) ;;光标靠近鼠标指针时，让鼠标指针自动让开，别挡住视线
-;; Tell Emacs fill commands to insert two after a colon
-(setq colon-double-space t)
+(setq colon-double-space t) ;; Tell Emacs fill commands to insert two after a colon
 (setq require-final-newline t) ;; 在文档最后自动插入空白行
-(show-paren-mode t) ;;括号匹配时显示另外一边的括号，而不是烦人的跳到另一个括号
+;;(show-paren-mode t) ;;括号匹配时显示另外一边的括号，而不是烦人的跳到另一个括号
 (setq show-paren-style 'parentheses)
 (setq frame-title-format '((:eval (getenv-internal "LOGNAME"))"@"(:eval (system-name))":"(:eval (or (buffer-file-name) (buffer-name))))) ;;在标题栏显示buffer的名字.区分不同的主机和用户名称
 (transient-mark-mode t) ;; 允许临时设置标记
-;; (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*") ;;设置 sentence-end 可以识别中文标点
 (setq sentence-end-double-space nil)
 ;;让 dired 可以递归的拷贝和删除目录
 (setq dired-listing-switches "-lh")
@@ -109,14 +87,10 @@
 ;;可以递归的使用 minibuffer
 (setq scroll-margin 3 scroll-conservatively 10000)
 ;;鼠标滚轮，默认的滚动太快，这里改为3行
-(defun up-slightly () (interactive) (scroll-up 2))
-(defun down-slightly () (interactive) (scroll-down 2))
+(defun up-slightly () (interactive) (scroll-up 3))
+(defun down-slightly () (interactive) (scroll-down 3))
 (global-set-key [wheel-up] 'down-slightly)
 (global-set-key [wheel-down] 'up-slightly)
-
-;; CUA矩阵编辑模式
-;; M-x cua-mod
-;; 然后移动光标到矩阵左上角并使用 Ctrl-Enter
 
 ;; smex
 (require 'smex)
@@ -152,33 +126,13 @@
 ;; C-u C-SPC 让emacs的光标回到上次光标处
 
 ;; 括号匹配,找到对应的括号{}
-(defun match-paren (arg)
-  "Go to the matching paren if on a paren; otherwise insert %."
-  (interactive "p")
-  (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
-    ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
-    (t (self-insert-command (or arg 1)))))
-(global-set-key "%" 'match-paren)
-
-;;解决emacs shell乱码
-(setq ansi-color-for-comint-mode t)
-(setq ansi-color-names-vector ["black" "red" "green" "blue" "yellow" "magenta" "cyan" "white"])
-(setq verilog-auto-lineup (quote all))
-(customize-group 'ansi-colors)
-(kill-this-buffer);;关闭customize窗口
-;; shell-command - enables tab-completion for `shell-command'
-(setq shell-command-completion-mode 1)
-;;shell,gdb退出后，自动关闭该buffer
-(defun kill-buffer-when-exit ()
-  "Close assotiated buffer when a process exited"
-  (let ((current-process (ignore-errors (get-buffer-process (current-buffer)))))
-    (when current-process
-      (set-process-sentinel current-process
-                (lambda (watch-process change-state)
-                  (when (string-match "\\(finished\\|exited\\)" change-state)
-                (kill-buffer (process-buffer watch-process))))))))
-(add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
-(add-hook 'shell-mode-hook 'kill-buffer-when-exitt)
+;;defun match-paren (arg)
+;; "Go to the matching paren if on a paren; otherwise insert %."
+;; (interactive "p")
+;; (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+;;   ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+;;   (t (self-insert-command (or arg 1)))))
+;;global-set-key "%" 'match-paren)
 
 ;; 回车缩进
 (global-set-key "\C-m" 'newline-and-indent)
@@ -194,7 +148,6 @@
 (setq-default tab-width 4)
 (setq-default tab-stop-list ())
 (setq-default tab-always-indent 'complete) ;; 先格式化再补全
-
 
 ;; ido - interactively do things with buffers and files.
 (setq ido-confirm-unique-completion t)
@@ -228,54 +181,6 @@
 (global-set-key (kbd "<s-down>") 'tabbar-forward-group)
 (global-set-key (kbd "<s-left>") 'tabbar-backward)
 (global-set-key (kbd "<s-right>") 'tabbar-forward)
-
-;; 调整字体大小
-(global-set-key (kbd "<C-M-wheel-up>") 'text-scale-increase)
-(global-set-key (kbd "<C-M-wheel-down>") 'text-scale-decrease)
-
-;; dos 和 unix 格式转换
-(defun dos2unix ()
-  "dos2unix on current buffer."
-  (interactive)
-  (setq buffer-display-table (make-display-table))
-  (aset buffer-display-table ?\^M [])
-  (set-buffer-file-coding-system 'unix))
-(defun unix2dos ()
-  "unix2dos on current buffer."
-  (interactive)
-  (set-buffer-file-coding-system 'dos))
-;; (define-key global-map (kbd "C-x M-D") 'dos2unix)
-
-;; 显示当前buffer或region或函数的行数和字符数
-(defun count-brf-lines (&optional is-fun)
-  "显示当前buffer或region或函数的行数和字符数"
-  (interactive "P")
-  (let (min max)
-    (if is-fun
-    (save-excursion
-      (beginning-of-defun) (setq min (point))
-      (end-of-defun) (setq max (point))
-      (message "当前函数%s内共有%d行, %d个字符" (which-function) (count-lines min max) (- max min)))
-      (if mark-active
-      (progn
-     (setq min (min (point) (mark)))
-     (setq max (max (point) (mark))))
-    (setq min (point-min))
-    (setq max (point-max)))
-      (if (or (= 1 (point-min)) mark-active)
-      (if mark-active
-          (message "当前region内共有%d行, %d个字符" (count-lines min max) (- max min))
-        (message "当前buffer内共有%d行, %d个字符" (count-lines min max) (- max min)))
-    (let ((nmin min) (nmax max))
-      (save-excursion
-        (save-restriction
-          (widen)
-          (setq min (point-min))
-          (setq max (point-max))))
-      (message "narrow下buffer内共有%d行, %d个字符, 非narrow下buffer内共有%d行, %d个字符"
-           (count-lines nmin nmax) (- nmax nmin) (count-lines min max) (- max min)))))))
-(global-set-key (kbd "C-x l") 'count-brf-lines)
-(global-set-key (kbd "C-x L") (lambda () (interactive) (count-brf-lines t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; CEDET
@@ -323,7 +228,7 @@
 (defun alexott/cedet-hook ()
   (local-set-key [(control return)] 'semantic-ia-complete-symbol-menu)
   (local-set-key "\C-c?" 'semantic-ia-complete-symbol)
-  ;;
+  
   (local-set-key "\C-c>" 'semantic-complete-analyze-inline)
   (local-set-key "\C-c=" 'semantic-decoration-include-visit)
 
@@ -372,46 +277,12 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin/")))
 
-;; C style
-(defconst my-c-style
-  '((c-toggle-ab-always-indent .t)
-    (c-tab-always-indent .t)
-    (c-comment-only-line-offset .4)
-    (c-hanging-braces-alist
-     .((substatement-open after)
-       (brace-list-open)))
-    (c-hanging-colons-alist
-     .((member-init-intro before)
-       (inher-intro)
-       (case-label after)
-       (label after)
-       (access-label after)))
-    (c-cleanup-list
-     .(scope-operator
-       empty-defun-braces
-       defun-close-semi))
-    (c-offsets-alist
-     .((arglist-close .c-lineup-arglist)
-       (substatement-open .0)
-       (case-label .4)
-       (block-open .0)
-       (knr-argdecl-intro .-)))
-    (c-echo-syntactic-information-p . t))
-  "My C Programming Style")
-
-;; offset customizations not in my-c-style
-(setq c-offsets-alist '((member-init-intro . ++)))
-
 ;; Customizations for all modes in CC Mode.
 (defun my-c-mode-common-hook ()
-  (c-add-style "PERSONAL" my-c-style t)
   (c-set-style "K&R")
   (setq indent-tabs-mode t)
   (setq tab-width 4)
-  ;; (setq c-basic-offset 4)
   ;;(setq c-toggle-auto-newline t)
-  ;; (c-toggle-hungry-state 1) ;;此模式下，当按Backspace时会删除最多的空格
-  ;; (c-toggle-auto-hungry-state 1) ;; auto-newline and hungry-delete
   (which-function-mode) ;;在状态条上显示当前光标在哪个函数体内部
   (local-set-key "\C-c\t" 'complete-symbol)
   (hs-minor-mode 1) ;; 代码折叠
@@ -420,25 +291,6 @@
 (add-hook 'c-mode-hook 'my-c-mode-common-hook)
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 (add-hook 'c++-mode-hook 'my-c-mode-common-hook)
-
-;; 快速include一个系统头文件
-;; echo "" | g++ -v -x c++ -E -
-;;(mapc (lambda (mode)
-;;  (define-abbrev-table mode '(("inc" "" skeleton-include 1))))
-;;      '(c-mode-abbrev-table c++-mode-abbrev-table))
-;;;; 输入 inc , 可以自动提示输入文件名称,可以自动补全.
-;;(define-skeleton skeleton-include
-;;  "generate include<>" ""
-;;  > "#include <"
-;;  (completing-read "Include File:"
-;;         (mapcar #'(lambda (f) (list f ))
-;;             (apply 'append (mapcar #'(lambda (dir) (directory-files dir))
-;;                        (list "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"
-;;                          "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/6.1.0/include"
-;;                          "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
-;;                          "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/include"
-;;                          "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks"a
-;;                          )))))">")
 
 ;; 智能编译 & GDB
 (add-to-list 'load-path ".emacs.d/elpa")
@@ -449,9 +301,9 @@
 ;; 自动跳到第一个error
 (setq compilation-auto-jump-to-first-error t)
 (add-hook 'gdb-mode-hook
-	  (lambda ()
-	    (local-set-key "\C-u" 'comint-kill-input)
-	    (local-set-key "\M-p" 'comint-previous-matching-input-from-input)))
+      (lambda ()
+        (local-set-key "\C-u" 'comint-kill-input)
+        (local-set-key "\M-p" 'comint-previous-matching-input-from-input)))
 
 ;; speedbar
 ;; (when window-system (speedbar t))
@@ -469,7 +321,7 @@
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-tooltip-limit 16)                      ; bigger popup window
 (setq company-minimum-prefix-length 0)               ; autocomplete right after '.'
-(setq company-idle-delay .1)                         ; shorter delay before autocompletion popup
+(setq company-idle-delay .3)                         ; shorter delay before autocompletion popup
 (setq company-echo-delay 0)                          ; removes annoying blinking
 (setq company-begin-commands '(self-insert-command)) ; start autocompletion only after typing
 (global-set-key [(ctrl ?/)] 'company-complete)
@@ -511,7 +363,7 @@
         (set (make-local-variable 'company-backends) '(company-go))
         (company-mode)
         (add-hook 'before-save-hook 'gofmt-before-save)
-     
+
         ;; Imenu & Speedbar
         (setq imenu-generic-expression
           '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)
@@ -528,3 +380,19 @@
 ;;(require 'php-mode)
 ;;(eval-after-load 'php-mode
 ;;'(require 'php-ext))
+
+;; python
+;; pip install jedi flake8 importmagic autopep8
+(elpy-enable)
+(setq elpy-rpc-backend "jedi")
+(require 'py-autopep8)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+;; virutal environment:  virtualenvwrapper
+(require 'virtualenvwrapper)
+(venv-initialize-interactive-shells)
+(venv-initialize-eshell)
+(setq venv-location "~/tensorflow/"); setup virtual environment folder
+;; if there multiple folder:
+;; (setq venv-location '("~/myvenv-1/"
+;;                       "~/myvenv-2/"))
+;; M-x venv-workon open virtual environment
