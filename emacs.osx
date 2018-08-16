@@ -75,7 +75,7 @@
 (mouse-avoidance-mode 'animate) ;;光标靠近鼠标指针时，让鼠标指针自动让开，别挡住视线
 (setq colon-double-space t) ;; Tell Emacs fill commands to insert two after a colon
 (setq require-final-newline t) ;; 在文档最后自动插入空白行
-;;(show-paren-mode t) ;;括号匹配时显示另外一边的括号，而不是烦人的跳到另一个括号
+(show-paren-mode t) ;;括号匹配时显示另外一边的括号，而不是烦人的跳到另一个括号
 (setq show-paren-style 'parentheses)
 (setq frame-title-format '((:eval (getenv-internal "LOGNAME"))"@"(:eval (system-name))":"(:eval (or (buffer-file-name) (buffer-name))))) ;;在标题栏显示buffer的名字.区分不同的主机和用户名称
 (transient-mark-mode t) ;; 允许临时设置标记

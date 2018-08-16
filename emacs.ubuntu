@@ -9,9 +9,10 @@
  '(custom-enabled-themes (quote (misterioso)))
  '(display-time-mode t)
  '(font-use-system-font t)
+ '(global-linum-mode t)
  '(package-selected-packages
    (quote
-    (go-guru tabbar markdown-mode smex sr-speedbar lua-mode ggtags company-go)))
+    (go-mode flycheck-gometalinter elpy virtualenvwrapper py-autopep8 smart-compile go-guru tabbar markdown-mode smex sr-speedbar lua-mode ggtags bm go-errcheck)))
  '(save-place t nil (saveplace))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
@@ -19,22 +20,62 @@
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify) (quote (transient-mark-mode (quote (only . t))))))
 
-
 ;; MELPA
-(require 'package) ;; You might already have this line
+(require 'package) 
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (url (concat (if no-ssl "http" "http") "://melpa.org/packages/")))
   (add-to-list 'package-archives (cons "melpa" url) t))
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
-(package-initialize) ;; You might already have this line
+;; MELPA 自动安装扩展
+(setq package-archives
+      '(("gnu" . "https://elpa.gnu.org/packages/")
+        ("melpa" . "https://melpa.org/packages/")
+        ("org" . "http://orgmode.org/elpa/")))
+(package-initialize)
+ 
+(defun require-package (package &optional min-version no-refresh)
+  "Install given PACKAGE, optionally requiring MIN-VERSION.
+If NO-REFRESH is non-nil, the available package lists will not be
+re-downloaded in order to locate PACKAGE."
+  (if (package-installed-p package min-version)
+      t
+    (if (or (assoc package package-archive-contents) no-refresh)
+        (if (boundp 'package-selected-packages)
+            ;; Record this as a package the user installed explicitly
+            (package-install package nil)
+          (package-install package))
+      (progn
+        (package-refresh-contents)
+        (require-package package min-version t)))))
+(defun maybe-require-package (package &optional min-version no-refresh)
+  "Try to install PACKAGE, and return non-nil if successful.
+In the event of failure, return nil and print a warning message.
+Optionally require MIN-VERSION.  If NO-REFRESH is non-nil, the
+available package lists will not be re-downloaded in order to
+locate PACKAGE."
+  (condition-case err
+      (require-package package min-version no-refresh)
+    (error
+     (message "Couldn't install optional package `%s': %S" package err)
+     nil)))
+
+(require-package 'go-mode)
+(require-package 'flycheck-gometalinter)
+(require-package 'elpy)
+(require-package 'smart-compile)
+(require-package 'go-guru)
+(require-package 'tabbar)
+(require-package 'smex)
+(require-package 'sr-speedbar)
+(require-package 'lua-mode)
+(require-package 'ggtags)
+(require-package 'bm)
+(require-package 'go-errcheck)
 
 
-;; init PATH & exec-path from current shell
+;; init PATH & exec-path from current shel>l
 (defun set-exec-path-from-shell-PATH ()
   (let ((path-from-shell (shell-command-to-string "$SHELL -c 'echo $PATH'")))
     (setenv "PATH" path-from-shell)
@@ -47,7 +88,6 @@
 ;; 个人信息
 (setq user-full-name "Heng Liu")
 (setq user-mail-address "liuhengloveyou@icloud.com")
-(set-face-attribute 'default nil :font "Monaco 13") ;; 字体
 ;;(setq display-time-24hr-format t) ;; 时间使用24小时制
 ;;(display-time-mode t) ;; mode line上的时间显示
 ;;(setq display-time-day-and-date nil) ;; 时间显示包括日期和具体时间
@@ -57,25 +97,22 @@
 ;;(setq major-mode 'text-mode) ;; 打开就启用text模式
 ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
 (setq inhibit-startup-message t) ;; 禁用启动信息
-;;(setq initial-scratch-message "")
-;; (setq auto-image-file-mode t) ;;让 Emacs 可以直接打开和显示图片
 (setq visible-bell t) ;; 关闭出错时的蜂鸣提示声
 (setq ring-bell-function 'ignore) ;; 没有提示音,也不闪屏
 (setq echo-keystrokes 0.2) ;; 尽快显示按键序列
 (which-function-mode 1) ;; 用来显示当前光标在哪个函数
 (transient-mark-mode t) ;; 高亮显示要拷贝的区域
-(setq-default cursor-type 'bar) ;;光标显示为一竖线
 (set-cursor-color "RED") ;;光标色
+;;(setq-default cursor-type 'bar) ;;光标显示为一竖线
+;;(blink-cursor-mode 1) ;;指针要闪
 (setq enable-recursive-minibuffers t)
 (setq resize-mini-windows t);;允许minibuffer自由变化其宽度大小
 (blink-cursor-mode 1) ;;指针要闪
-(setq x-select-enable-clipboard t) ;; Linux 下复制内容到系统的剪切板
 ;;(setq-default indicate-buffer-boundaries 'left) ;; 在fringe上显示一个小箭头指示当前buffer的边界
 (autoload 'toggle-emacs-lock "emacs-lock" "Emacs lock" t) ;; emacs lock
 (setq kill-do-not-save-duplicates t) ;; 不保存连续的重复的kill
 (auto-compression-mode 1) ;; 打开压缩文件时自动解压缩. 必须放在session前面
 (add-hook 'gnus-group-mode-hook 'gnus-topic-mode) ;; Group Buffer设置.自动进入Topic-mode
-(setq x-select-enable-clipboard t) ;;支持emacs和外部程序的粘贴
 (setq Man-notify-method 'pushy) ;; 在emacs读man文档时，使用当前buffer
 (setq version-control t) ;;启用备份
 (setq kept-old-versions 2) ;;备份最原始的版本两次，记第一次编辑前的文档，和第二次编辑前的文档
@@ -91,16 +128,13 @@
 (setq mouse-autoselect-window t) ;;当鼠标移动的时候自动转换frame，window或者minibuffer
 (fset 'yes-or-no-p 'y-or-n-p) ;;以 y/n代表 yes/no
 (set-default 'truncate-lines t) ;; 超长的行不折行显示
-;; (global-set-key [C-f10] 'menu-bar-mode) ;;将F10绑定为显示菜单栏
 (mouse-avoidance-mode 'animate) ;;光标靠近鼠标指针时，让鼠标指针自动让开，别挡住视线
-;; Tell Emacs fill commands to insert two after a colon
-(setq colon-double-space t)
+(setq colon-double-space t) ;; Tell Emacs fill commands to insert two after a colon
 (setq require-final-newline t) ;; 在文档最后自动插入空白行
 (show-paren-mode t) ;;括号匹配时显示另外一边的括号，而不是烦人的跳到另一个括号
 (setq show-paren-style 'parentheses)
 (setq frame-title-format '((:eval (getenv-internal "LOGNAME"))"@"(:eval (system-name))":"(:eval (or (buffer-file-name) (buffer-name))))) ;;在标题栏显示buffer的名字.区分不同的主机和用户名称
 (transient-mark-mode t) ;; 允许临时设置标记
-;; (setq sentence-end "\\([。！？]\\|……\\|[.?!][]\"')}]*\\($\\|[ \t]\\)\\)[ \t\n]*") ;;设置 sentence-end 可以识别中文标点
 (setq sentence-end-double-space nil)
 ;;让 dired 可以递归的拷贝和删除目录
 (setq dired-listing-switches "-lh")
@@ -159,26 +193,6 @@
     ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
     (t (self-insert-command (or arg 1)))))
 (global-set-key "%" 'match-paren)
-
-;;解决emacs shell乱码
-(setq ansi-color-for-comint-mode t)
-(setq ansi-color-names-vector ["black" "red" "green" "blue" "yellow" "magenta" "cyan" "white"])
-(setq verilog-auto-lineup (quote all))
-(customize-group 'ansi-colors)
-(kill-this-buffer);;关闭customize窗口
-;; shell-command - enables tab-completion for `shell-command'
-(setq shell-command-completion-mode 1)
-;;shell,gdb退出后，自动关闭该buffer
-(defun kill-buffer-when-exit ()
-  "Close assotiated buffer when a process exited"
-  (let ((current-process (ignore-errors (get-buffer-process (current-buffer)))))
-    (when current-process
-      (set-process-sentinel current-process
-                            (lambda (watch-process change-state)
-                              (when (string-match "\\(finished\\|exited\\)" change-state)
-                                (kill-buffer (process-buffer watch-process))))))))
-(add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
-(add-hook 'shell-mode-hook 'kill-buffer-when-exittt)
 
 ;; 回车缩进
 (global-set-key "\C-m" 'newline-and-indent)
@@ -329,7 +343,7 @@
   (setq indent-tabs-mode t)
   (setq tab-width 8)
   (setq c-basic-offset 8)
-  (setq c-toggle-auto-newline t)
+  ;;(setq c-toggle-auto-newline t)
   (c-toggle-hungry-state 1) ;;此模式下，当按Backspace时会删除最多的空格
   (c-toggle-auto-hungry-state 1) ;; auto-newline and hungry-delete
   (which-function-mode) ;;在状态条上显示当前光标在哪个函数体内部
@@ -473,9 +487,9 @@
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 (setq company-tooltip-limit 16)                      ; bigger popup window
-(setq company-minimum-prefix-length 0)               ; autocomplete right after '.'
-(setq company-idle-delay .1)                         ; shorter delay before autocompletion popup
-(setq company-echo-delay 0)                          ; removes annoying blinking
+(setq company-minimum-prefix-length .3)               ; autocomplete right after '.'
+(setq company-idle-delay .3)                         ; shorter delay before autocompletion popup
+(setq company-echo-delay .3)                          ; removes annoying blinking
 (setq company-begin-commands '(self-insert-command)) ; start autocompletion only after typing
 (global-set-key [(ctrl ?/)] 'company-complete)
 
@@ -488,7 +502,6 @@
  '(company-preview ((t (:foreground "darkgray" :underline t))))
  '(company-preview-common ((t (:inherit company-preview))))
  '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
- '(company-tooltip-selection ((t (:background "steelblue" :foreground "white"))))
  '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
  '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
  '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
@@ -524,34 +537,64 @@
 (global-set-key (kbd "<C-M-mouse-5>") 'text-scale-decrease)
 
 ;; golang
-;; gocode set propose-builtins true
-;; gocode set lib-path /media/sda1/golang/go/pkg/linux_amd64
-;;
-;; godoc  Using the godoc function, you can invoke the identically named Go tool from within Emacs and read package documentation in a view-mode buffer.
-;;
-(setenv "GOPATH" "/media/sda1/golang/mygo")
-(setenv "GOROOT" "/media/sda1/golang/go")
-(setenv "PATH" (concat (getenv "PATH") ":/media/sda1/golang/go/bin/"))
-(setenv "PATH" (concat (getenv "PATH") ":/media/sda1/golang/mygo/bin/"))
-(setq exec-path (append exec-path '("/media/sda1/golang/mygo/bin/")))
-(setq exec-path (append exec-path '("/media/sda1/golang/go/bin")))
-(require 'go-mode-load)
+(setenv "GOROOT" "/usr/local/go/")
+(setenv "GOPATH" "/home/liuheng/go")
+(setenv "PATH" (concat (getenv "PATH") ":/home/liuheng/go/bin"))
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/go/bin"))
+(setq exec-path (append exec-path '("/home/liuheng/go/bin")))
+(setq exec-path (append exec-path '("/usr/local/go/bin")))
 (require 'company-go)
+(require 'go-errcheck)
+(require 'go-guru)
+
+(autoload 'go-mode "go-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+(add-hook 'before-save-hook #'gofmt-before-save)
+(add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
 (add-hook 'go-mode-hook
-	  (lambda ()
-	    (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)
-	    (local-set-key (kbd "C-c i") 'go-goto-imports)
-	    (local-set-key (kbd "C-c C-f") 'gofmt)
-	    (set (make-local-variable 'company-backends) '(company-go))
-	    (company-mode 1)
-	    (ggtags-mode 1)
-	    ;; Imenu & Speedbar
-	    (setq imenu-generic-expression
-		  '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)
-		    ("func" "^func *\\(.*\\) {" 1)))
-	    (imenu-add-to-menubar "Index")))
+      (lambda ()
+        (local-set-key (kbd "M-.") #'go-guru-definition)
+        (local-set-key (kbd "C-c C-r") #'go-remove-unused-imports)
+        (local-set-key (kbd "C-c i") 'go-goto-imports)
+        (local-set-key (kbd "C-c C-f") 'gofmt)
+        (set (make-local-variable 'company-backends) '(company-go))
+        (company-mode)
+        (flycheck-mode)
+        
+        ;; Imenu & Speedbar
+        (setq imenu-generic-expression
+          '(("type" "^type *\\([^ \t\n\r\f]*\\)" 1)
+            ("func" "^func *\\(.*\\) {" 1)))
+        (imenu-add-to-menubar "Index")))
+;; skips 'vendor' directories and sets GO15VENDOREXPERIMENT=1
+(setq flycheck-gometalinter-vendor t)
+;; only show errors
+;;(setq flycheck-gometalinter-errors-only t)
+;; only run fast linters
+(setq flycheck-gometalinter-fast t)
+;; use in tests files
+(setq flycheck-gometalinter-test t)
+;; disable linters
+;;(setq flycheck-gometalinter-disable-linters '("gotype" "gocyclo"))
+;; Only enable selected linters
+;;(setq flycheck-gometalinter-disable-all t)
+(setq flycheck-gometalinter-enable-linters '("golint"))
+;; Set different deadline (default: 5s)
+(setq flycheck-gometalinter-deadline "10s")
 
 ;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+(put 'upcase-region 'disabled nil)
+
+;; python
+;; pip install jedi flake8 importmagic autopep8
+;;(elpy-enable)
+;;(setq elpy-rpc-backend "jedi")
+;;(require 'py-autopep8)
+;;(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+;;;;virutal environment:  virtualenvwrapper
+;;(require 'virtualenvwrapper)
+;;(venv-initialize-interactive-shells)
+;;(venv-initialize-eshell)
