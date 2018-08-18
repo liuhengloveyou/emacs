@@ -411,7 +411,7 @@
 ;;(setq flycheck-gometalinter-disable-all t)
 (setq flycheck-gometalinter-enable-linters '("golint"))
 ;; Set different deadline (default: 5s)
-(setq flycheck-gometalinter-deadline "10s")
+(setq flycheck-gometalinter-deadline "5s")
 
 ;; lua-mode
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -420,7 +420,7 @@
 (put 'upcase-region 'disabled nil)
 
 ;; python
-;; pip install jedi flake8 importmagic autopep8
+;; pip3 install jedi flake8 importmagic autopep8
 (elpy-enable)
 (setq elpy-rpc-backend "jedi")
 (require 'py-autopep8)
