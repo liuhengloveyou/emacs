@@ -73,6 +73,8 @@ locate PACKAGE."
 (require-package 'ggtags)
 (require-package 'bm)
 (require-package 'go-errcheck)
+(require-package 'highlight-symbol)
+(require-package 'company-go)
 
 
 ;; init PATH & exec-path from current shel>l
